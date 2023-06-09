@@ -1,5 +1,10 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import random
+from random import randint
 from selenium.webdriver.common.by import By
 import time
 import openpyxl
@@ -15,46 +20,62 @@ for x in range(2, 10):  # 2 - A2 ячейка, 187 - A186 ячейка.
     sheet = wb['Лист1']
     #sheet = wb.get_sheet_by_name('Лист1')
 
+    # получаем кортеж из ОГРН в ячейке A2
     a = tuple(str(sheet.cell(row=x,
-                             column=1).value).strip())  # получаем кортеж из ОГРН в ячейке A2
-    # act = browser.find_element_by_id('query')
+                             column=1).value).strip())
+
+    # поиск строки с ИНН
     act = browser.find_element(By.NAME, "val")
+    # перевод курсора в сроку ИНН
     act.click()
+    # пауза 3 секунды
     time.sleep(3)
-    # вводим посимвольно в строку ОГРН, т.к. ввод сразу всего ОГРН не корректно обрабатывается
+    # вводим посимвольно в строку ИНН, т.к. ввод сразу всего ИНН не корректно
+    # обрабатывается
     i = 0
     for i in range(10):
         act.send_keys(a[i])
-        time.sleep (0.1)
+        time.sleep(round(random.uniform(0.2, 0.5), 2))
         i += 1
+    # поиск строки с кнопкой "поиск"
     act = browser.find_element(By.CSS_SELECTOR, '.btn-primary')
-    time.sleep(0.5)
+    # пауза от 1 до 3 секунд
+    time.sleep(randint(1, 3))
+    # переход по ссылке
     act.click()
-    time.sleep(2)
+    # пауза от 3 до 4 секунд
+    time.sleep(randint(3, 4))
     act = browser.find_element(By.XPATH,
                                "/html/body/div[2]/div[1]/div[1]/div/p/label/a")
-    time.sleep(0.5)
+
+    time.sleep(randint(1, 3))
     act.click()
-    time.sleep(2)
+    # пауза от 3 до 4 секунд
+    time.sleep(randint(3, 4))
+
     act = browser.find_element(By.XPATH,
                                "/html/body/div[2]/div[1]/div[1]/a[3]")
-    time.sleep(0.5)
+    # пауза от 1 до 3 секунд
+    time.sleep(randint(1, 3))
+    # переход по ссылке
     act.click()
-    time.sleep(2)
+
+    get_url = browser.current_url
+
+
+
+    # пауза от 3 до 4 секунд
+    time.sleep(randint(3, 4))
     browser.back()
-    time.sleep(0.5)
+    # пауза от 1 до 3 секунд
+    time.sleep(randint(1, 3))
     browser.back()
-    time.sleep(0.5)
+    time.sleep(randint(1, 3))
+    # пауза от 1 до 3 секунд
     browser.back()
-    time.sleep(0.5)
-    # act = browser.find_element(By.XPATH, '//*[@title="В начало"]')
-    # time.sleep(0.5)
-    # act.click()
-    # удаляем старый ОГРН
-    # i = 0
-    # for i in range(10):
-    #     act.send_keys(Keys.BACK_SPACE)
-    #     i += 1
+    time.sleep(randint(1, 3))
+    # пауза от 1 до 3 секунд
+
 
     x += 1
 browser.quit()
