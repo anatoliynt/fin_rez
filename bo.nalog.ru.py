@@ -12,34 +12,36 @@ from selenium.webdriver.common.by import By
 import time
 import openpyxl
 
-# browser = webdriver.Firefox()
+# Переменная browser для подключения к Хрому
 browser = webdriver.Chrome()
-time.sleep(5)  # долго грузится - делаем задержку
+# долго грузится - делаем задержку
+time.sleep(2)
+# открываем ссылку Налоговых отчетов
 browser.get('https://bo.nalog.ru/')
 
-for x in range(2, 10):  # 2 - A2 ячейка, 187 - A186 ячейка.
-    wb = openpyxl.load_workbook('ИНН.xlsx')
-    # sheet=wb.get_active_sheet()
-    sheet = wb['Лист1']
-    #sheet = wb.get_sheet_by_name('Лист1')
 
-    # получаем кортеж из ОГРН в ячейке A2
+# цикл по заданному списку ИНН
+# 2 - A2 ячейка, 10 - A9 ячейка.
+for x in range(2, 10):
+    # открываем файл с ИНН
+    wb = openpyxl.load_workbook('ИНН.xlsx')
+    # указываем активный лист
+    sheet = wb['Лист1']
+    # получаем кортеж из ИНН в ячейке по циклу начиная с А2
     a = tuple(str(sheet.cell(row=x,
                              column=1).value).strip())
-    #
-    # action = ActionBuilder(browser)
-    # action.pointer_action.move_to_location(8, 0)
-    # action.perform()
+    # пауза 5 секунд после подключения к сайту
     time.sleep(5)
-    clickable = browser.find_element(By.CLASS_NAME, "logo-main")
-    ActionChains(browser) \
-        .context_click(clickable) \
-        .perform()
+    # ищем информационное окно "Ресурс сформирован на основании информации,
+    #                                  представленной составителями отчетности"
+    act = browser.find_element(By.XPATH,
+                               '//div[@class = "modal-content short-info-bottom"]'
+                               '/child::button')
+    # закрываем окно
+    act.click()
     # поиск строки с ИНН
     act = browser.find_element(By.ID, 'search')
-    # перевод курсора в сроку ИНН
-    # act.click()
-    # пауза 3 секунды
+    # пауза 3 секунду
     time.sleep(3)
     # вводим посимвольно в строку ИНН, т.к. ввод сразу всего ИНН не корректно
     # обрабатывается
@@ -49,45 +51,42 @@ for x in range(2, 10):  # 2 - A2 ячейка, 187 - A186 ячейка.
         time.sleep(round(random.uniform(0.2, 0.5), 2))
         i += 1
     # поиск строки с кнопкой "поиск"
-    time.sleep(3)
     act = browser.find_element(By.CSS_SELECTOR, '.button_search')
     # пауза от 1 до 3 секунд
     time.sleep(randint(1, 3))
     # переход по ссылке
     act.click()
     # пауза от 3 до 4 секунд
-    time.sleep(randint(3, 4))
-    act = browser.find_element(By.XPATH,
-                               "/html/body/div[2]/div[1]/div[1]/div/p/label/a")
-
     time.sleep(randint(1, 3))
+    # поиск ссылки на выбранной компании
+    act = browser.find_element(By.XPATH, '//div[@class = "results-search-tbody"]/child::a')
+    # переходим по ссылке выбранной компании
     act.click()
     # пауза от 3 до 4 секунд
-    time.sleep(randint(3, 4))
-
-    act = browser.find_element(By.XPATH,
-                               "/html/body/div[2]/div[1]/div[1]/a[3]")
+    time.sleep(randint(10, 11))
+    # поиск 2019 года
+    act = browser.find_element(By.XPATH, '//button[text() = "2019"][1]')
     # пауза от 1 до 3 секунд
-    time.sleep(randint(1, 3))
+    time.sleep(randint(8, 10))
     # переход по ссылке
     act.click()
-
-    get_url = browser.current_url
-
-
-
-    # пауза от 3 до 4 секунд
-    time.sleep(randint(3, 4))
-    browser.back()
-    # пауза от 1 до 3 секунд
-    time.sleep(randint(1, 3))
-    browser.back()
-    time.sleep(randint(1, 3))
-    # пауза от 1 до 3 секунд
-    browser.back()
-    time.sleep(randint(1, 3))
-    # пауза от 1 до 3 секунд
-
+    #
+    # get_url = browser.current_url
+    #
+    #
+    #
+    # # пауза от 3 до 4 секунд
+    # time.sleep(randint(3, 4))
+    # browser.back()
+    # # пауза от 1 до 3 секунд
+    # time.sleep(randint(1, 3))
+    # browser.back()
+    # time.sleep(randint(1, 3))
+    # # пауза от 1 до 3 секунд
+    # browser.back()
+    # time.sleep(randint(1, 3))
+    # # пауза от 1 до 3 секунд
+    #
 
     x += 1
 browser.quit()
