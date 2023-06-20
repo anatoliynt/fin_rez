@@ -12,13 +12,13 @@ from selenium.webdriver.common.by import By
 import time
 import openpyxl
 
+
 # Переменная browser для подключения к Хрому
 browser = webdriver.Chrome()
 # долго грузится - делаем задержку
 time.sleep(2)
 # открываем ссылку Налоговых отчетов
 browser.get('https://bo.nalog.ru/')
-
 
 # цикл по заданному списку ИНН
 # 2 - A2 ячейка, 10 - A9 ячейка.
@@ -30,8 +30,8 @@ for x in range(2, 10):
     # получаем кортеж из ИНН в ячейке по циклу начиная с А2
     a = tuple(str(sheet.cell(row=x,
                              column=1).value).strip())
-    # пауза 5 секунд после подключения к сайту
-    time.sleep(5)
+    # пауза 3-4 секунд после подключения к сайту
+    time.sleep(randint(3, 4))
     # ищем информационное окно "Ресурс сформирован на основании информации,
     #                                  представленной составителями отчетности"
     act = browser.find_element(By.XPATH,
@@ -41,8 +41,8 @@ for x in range(2, 10):
     act.click()
     # поиск строки с ИНН
     act = browser.find_element(By.ID, 'search')
-    # пауза 3 секунду
-    time.sleep(3)
+    # пауза 2-3 секунду
+    time.sleep(randint(2, 3))
     # вводим посимвольно в строку ИНН, т.к. ввод сразу всего ИНН не корректно
     # обрабатывается
     i = 0
@@ -56,37 +56,44 @@ for x in range(2, 10):
     time.sleep(randint(1, 3))
     # переход по ссылке
     act.click()
-    # пауза от 3 до 4 секунд
+    # пауза от 1 до 3 секунд
     time.sleep(randint(1, 3))
     # поиск ссылки на выбранной компании
-    act = browser.find_element(By.XPATH, '//div[@class = "results-search-tbody"]/child::a')
+    act = browser.find_element(By.XPATH,
+                               '//div[@class = "results-search-tbody"]/child::a')
     # переходим по ссылке выбранной компании
     act.click()
-    # пауза от 3 до 4 секунд
-    time.sleep(randint(10, 11))
-    # поиск 2019 года
-    act = browser.find_element(By.XPATH, '//button[text() = "2019"][1]')
-    # пауза от 1 до 3 секунд
+    # пауза от 8 до 10 секунд
     time.sleep(randint(8, 10))
+    # поиск Скачать таблицей или текстом года
+    act = browser.find_element(By.XPATH,
+                               '//button[text() = "Скачать таблицей или текстом"]')
+    # пауза от 2 до 4 секунд
+    time.sleep(randint(2, 4))
     # переход по ссылке
     act.click()
-    #
-    # get_url = browser.current_url
-    #
-    #
-    #
-    # # пауза от 3 до 4 секунд
-    # time.sleep(randint(3, 4))
-    # browser.back()
-    # # пауза от 1 до 3 секунд
-    # time.sleep(randint(1, 3))
-    # browser.back()
-    # time.sleep(randint(1, 3))
-    # # пауза от 1 до 3 секунд
-    # browser.back()
-    # time.sleep(randint(1, 3))
-    # # пауза от 1 до 3 секунд
-    #
+    # пауза от 1 до 3 секунд
+    time.sleep(randint(1, 3))
+    # находим запись Выбрать все
+    act = browser.find_element(By.XPATH, '//button[text() = "Выбрать все"]')
+    # отмечаем все отчеты
+    act.click()
+    # пауза от 1 до 3 секунд
+    time.sleep(randint(1, 3))
+    # переменная год для цикла
+    year = [2019, 2020, 2021, 2022]
+    for i_year in year:
+        # выбираем 2019 год
+        act = browser.find_element(By.XPATH, '//button[@data-year = "{0}"]'.format(i_year))
+        # нажимаем по 2019
+        act.click()
+        # пауза от 1 до 3 секунд
+        time.sleep(randint(1, 3))
+        # поиск кнопки скачать архив
+        act = browser.find_element(By.XPATH, '//span[text() = "Скачать архив"]')
+        act.click()
+        # пауза от 8 до 10 секунд
+        time.sleep(randint(8, 10))
 
     x += 1
 browser.quit()
